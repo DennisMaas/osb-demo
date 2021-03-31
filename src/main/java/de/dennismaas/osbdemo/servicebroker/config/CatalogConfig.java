@@ -1,8 +1,4 @@
-package de.dennismaas.osbdemo.config;
-
-/*
-The catalog is used to control which services our service broker has to offer
-*/
+package de.dennismaas.osbdemo.servicebroker.config;
 
 import org.springframework.cloud.servicebroker.model.catalog.Catalog;
 import org.springframework.cloud.servicebroker.model.catalog.Plan;
@@ -12,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-public class CatalogConfiguration {
+public class CatalogConfig {
 
     @Bean
     public Catalog catalog(){

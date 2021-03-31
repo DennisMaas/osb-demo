@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/places")
-
 public class PlaceController {
 
     private final PlaceService placeService;

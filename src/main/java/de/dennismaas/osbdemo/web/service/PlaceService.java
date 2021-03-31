@@ -15,10 +15,12 @@ public class PlaceService {
     @Autowired
     public PlaceService(PlacesMongoDao placesMongoDao) {
         this.placesMongoDao = placesMongoDao;
+
     }
 
     public List<Place> getPlaces() {
         return placesMongoDao.findAll();
 
     }
+
 }
