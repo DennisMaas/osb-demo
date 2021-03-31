@@ -1,6 +1,7 @@
-package de.dennismaas.osbdemo.web;
+package de.dennismaas.osbdemo.web.controller;
 
 import de.dennismaas.osbdemo.web.model.Place;
+import de.dennismaas.osbdemo.web.service.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

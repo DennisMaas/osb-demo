@@ -1,5 +1,6 @@
-package de.dennismaas.osbdemo.web;
+package de.dennismaas.osbdemo.web.service;
 
+import de.dennismaas.osbdemo.web.dao.PlacesMongoDao;
 import de.dennismaas.osbdemo.web.model.Place;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

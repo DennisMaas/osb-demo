@@ -1,4 +1,4 @@
-package de.dennismaas.osbdemo.web;
+package de.dennismaas.osbdemo.web.dao;
 
 import de.dennismaas.osbdemo.web.model.Place;
 import org.springframework.data.repository.PagingAndSortingRepository;
