@@ -30,6 +30,7 @@ public class PlaceSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/v2/**").hasRole("ADMIN")
+                .antMatchers("/**").anonymous()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
