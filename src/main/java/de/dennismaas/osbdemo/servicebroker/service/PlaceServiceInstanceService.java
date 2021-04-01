@@ -1,40 +1,45 @@
 package de.dennismaas.osbdemo.servicebroker.service;
 
 
-import de.dennismaas.osbdemo.web.service.PlaceService;
-import org.springframework.cloud.servicebroker.model.instance.*;
+import org.springframework.cloud.servicebroker.model.instance.CreateServiceInstanceRequest;
+import org.springframework.cloud.servicebroker.model.instance.CreateServiceInstanceResponse;
+import org.springframework.cloud.servicebroker.model.instance.DeleteServiceInstanceRequest;
+import org.springframework.cloud.servicebroker.model.instance.DeleteServiceInstanceResponse;
 import org.springframework.cloud.servicebroker.service.ServiceInstanceService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 @Service
 public class PlaceServiceInstanceService implements ServiceInstanceService {
 
-    private final PlaceService placeService;
+    private final OsbService osbService;
 
-    public PlaceServiceInstanceService(PlaceService placeService) {
-        this.placeService = placeService;
+    public PlaceServiceInstanceService(OsbService osbService) {
+        this.osbService = osbService;
     }
 
     @Override
     public Mono<CreateServiceInstanceResponse> createServiceInstance(CreateServiceInstanceRequest request) {
-        String serviceInstanceId = request.getServiceInstanceId();
-        String planId = request.getPlanId();
-        Map<String, Object> parameters = request.getParameters();
-
-        //
-        // perform the steps necessary to initiate the asynchronous
-        // provisioning of all necessary resources
-        //
-
-        String dashboardUrl = "http://localhost:8080/api/places"; /* construct a dashboard URL */
-
-        return Mono.just(CreateServiceInstanceResponse.builder()
-                .dashboardUrl(dashboardUrl)
-                .async(true)
-                .build());
+        return Mono.just(request.getServiceInstanceId())
+                .flatMap(instanceId -> Mono.just(CreateServiceInstanceResponse.builder())
+                        .flatMap(responseBuilder -> osbService.serviceInstanceExists(instanceId)
+                                .flatMap(exists -> {
+                                    if (exists) {
+                                        return osbService.getServiceInstance(instanceId)
+                                                .flatMap(mailServiceInstance -> Mono.just(responseBuilder
+                                                        .instanceExisted(true)
+                                                        .dashboardUrl(mailServiceInstance.getDashboardUrl())
+                                                        .build()));
+                                    } else {
+                                        return osbService.createServiceInstance(
+                                                instanceId, request.getServiceDefinitionId(), request.getPlanId())
+                                                .flatMap(mailServiceInstance -> Mono.just(responseBuilder
+                                                        .instanceExisted(false)
+                                                        .dashboardUrl(mailServiceInstance.getDashboardUrl())
+                                                        .build()));
+                                    }
+                                })));
     }
+
 
 
     @Override

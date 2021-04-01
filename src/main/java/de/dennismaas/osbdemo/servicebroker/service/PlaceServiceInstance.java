@@ -7,11 +7,10 @@ public class PlaceServiceInstance {
     private String planId;
     private String dashboardUrl;
 
-    public PlaceServiceInstance(String instanceId, String serviceDefinitionId, String planId, String dashboardUrl) {
+    public PlaceServiceInstance(String instanceId, String serviceDefinitionId, String planId) {
         this.instanceId = instanceId;
         this.serviceDefinitionId = serviceDefinitionId;
         this.planId = planId;
-        this.dashboardUrl = dashboardUrl;
     }
 
     public String getInstanceId() {
