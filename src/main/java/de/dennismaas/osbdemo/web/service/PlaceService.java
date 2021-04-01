@@ -1,8 +1,6 @@
 package de.dennismaas.osbdemo.web.service;
 
-import de.dennismaas.osbdemo.web.dao.PlacesMongoDao;
 import de.dennismaas.osbdemo.web.model.Place;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,16 +8,11 @@ import java.util.List;
 @Service
 public class PlaceService {
 
-    private final PlacesMongoDao placesMongoDao;
-
-    @Autowired
-    public PlaceService(PlacesMongoDao placesMongoDao) {
-        this.placesMongoDao = placesMongoDao;
-
-    }
 
     public List<Place> getPlaces() {
-        return placesMongoDao.findAll();
+        return List.of(
+                new Place("id1", "place1"),
+                new Place("id2", "place2"));
 
     }
 
