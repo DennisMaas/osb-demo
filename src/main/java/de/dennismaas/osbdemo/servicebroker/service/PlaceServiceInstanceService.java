@@ -1,6 +1,7 @@
 package de.dennismaas.osbdemo.servicebroker.service;
 
 
+import org.springframework.cloud.servicebroker.exception.ServiceInstanceDoesNotExistException;
 import org.springframework.cloud.servicebroker.model.instance.CreateServiceInstanceRequest;
 import org.springframework.cloud.servicebroker.model.instance.CreateServiceInstanceResponse;
 import org.springframework.cloud.servicebroker.model.instance.DeleteServiceInstanceRequest;
@@ -25,37 +26,37 @@ public class PlaceServiceInstanceService implements ServiceInstanceService {
                                 .flatMap(exists -> {
                                     if (exists) {
                                         return osbService.getServiceInstance(instanceId)
-                                                .flatMap(mailServiceInstance -> Mono.just(responseBuilder
+                                                .flatMap(placeServiceInstance -> Mono.just(responseBuilder
                                                         .instanceExisted(true)
-                                                        .dashboardUrl(mailServiceInstance.getDashboardUrl())
+                                                        .dashboardUrl(placeServiceInstance.getDashboardUrl())
                                                         .build()));
                                     } else {
                                         return osbService.createServiceInstance(
                                                 instanceId, request.getServiceDefinitionId(), request.getPlanId())
-                                                .flatMap(mailServiceInstance -> Mono.just(responseBuilder
+                                                .flatMap(placeServiceInstance -> Mono.just(responseBuilder
                                                         .instanceExisted(false)
-                                                        .dashboardUrl(mailServiceInstance.getDashboardUrl())
+                                                        .dashboardUrl(placeServiceInstance.getDashboardUrl())
                                                         .build()));
                                     }
                                 })));
     }
 
 
-
     @Override
     public Mono<DeleteServiceInstanceResponse> deleteServiceInstance(DeleteServiceInstanceRequest request) {
-        String serviceInstanceId = request.getServiceInstanceId();
-        String planId = request.getPlanId();
-
-        //
-        // perform the steps necessary to initiate the asynchronous
-        // deletion of all provisioned resources
-        //
-
-        return Mono.just(DeleteServiceInstanceResponse.builder()
-                .async(true)
-                .build());
+        return Mono.just(request.getServiceInstanceId())
+                .flatMap(instanceId -> osbService.serviceInstanceExists(instanceId)
+                        .flatMap(exists -> {
+                            if (exists) {
+                                return osbService.deleteServiceInstance(instanceId)
+                                        .thenReturn(DeleteServiceInstanceResponse.builder().build());
+                            } else {
+                                return Mono.error(new ServiceInstanceDoesNotExistException(instanceId));
+                            }
+                        }));
     }
+
+
 
 
 }
